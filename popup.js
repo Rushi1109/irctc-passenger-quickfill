@@ -126,6 +126,9 @@ function sendFillCommand() {
         if (chrome.runtime.lastError) {
           console.error("Injection failed:", chrome.runtime.lastError.message);
         } else {
+          console.log("Injection succeeded:", results);
+
+          // ✅ Send message to the content script inside the web page
           chrome.tabs.sendMessage(tabId, { action: "fill_form" });
         }
       }

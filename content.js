@@ -1,11 +1,20 @@
 console.log("[Extension] content.js injected successfully!");
 
-const passengerBlocks = document.querySelector('app-passenger')
-passengerBlocks.click()
-
 function fillPassengerDetails(passengers) {
-  const passengerBlocks = document.querySelectorAll('app-passenger')
-  console.log(passengerBlocks);
+  let passengerBlocks = document.querySelectorAll('app-passenger');
+
+  if(passengerBlocks.length != passengers.length) {
+    let countDiff = passengers.length - passengerBlocks.length;
+
+    const newSlotButton = document.querySelector(".prenext");
+    while(countDiff > 0) {
+      newSlotButton.click();
+      --countDiff;
+    }
+  }
+
+  // Get updated NodeList<Element>
+  passengerBlocks = document.querySelectorAll('app-passenger');
 
   passengers.forEach((passenger, index) => {
     const block = passengerBlocks[index];
@@ -45,7 +54,6 @@ function fillPassengerDetails(passengers) {
 
 // Listen for message from popup via injected script
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  console.log(msg);
   if (msg.action === "fill_form") {
     chrome.storage.local.get("passengers", (result) => {
       const passengers = result.passengers || [];

@@ -1,18 +1,17 @@
 {
   "manifest_version": 3,
   "name": "IRCTC Passenger AutoFill",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "Auto-fills passenger details on IRCTC with one click.",
-  "permissions": ["storage", "scripting", "activeTab", "tabs"],
+  "permissions": [
+    "storage", 
+    "scripting", 
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://www.irctc.co.in/*"
+  ],
   "action": {
     "default_popup": "popup.html"
-  },
-  "content_scripts": [
-    {
-      "matches": ["*://www.irctc.co.in/*"],
-      "js": ["content.js"],
-      "run_at": "document_idle"
-    }
-  ],
-  "host_permissions": ["*://www.irctc.co.in/*"]
+  }
 }
