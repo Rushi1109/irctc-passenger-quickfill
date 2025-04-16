@@ -1,12 +1,16 @@
 const MAX_PASSENGERS = 6;
+let currentPassengerCount = 0;
 const container = document.getElementById("passenger-container");
 
 function createPassengerFields(index, data = {}) {
   const div = document.createElement("div");
+  div.className = "passenger-block";
+  div.dataset.index = index;
+
   div.innerHTML = `
     <strong>Passenger ${index + 1}</strong><br>
     <input placeholder="Name*" id="name${index}" value="${data.name || ""}" />
-    <input placeholder="Age*" id="age${index}" value="${data.age || ""}" />
+    <input placeholder="Age*" id="age${index}" value="${data.age || ""}" type="number" />
     <select id="gender${index}">
       <option value="">Gender*</option>
       <option value="M" ${data.gender === "M" ? "selected" : ""}>Male</option>
@@ -31,64 +35,124 @@ function createPassengerFields(index, data = {}) {
       <option value="V" ${data.food === "V" ? "selected" : ""}>Veg</option>
       <option value="N" ${data.food === "N" ? "selected" : ""}>Non Veg</option>
     </select>
+    <button class="remove-btn">Remove</button>
     <hr>
   `;
+  const removeBtn = div.querySelector(".remove-btn");
+  removeBtn.addEventListener("click", () => {
+    removePassenger(index);
+    savePassengers();
+  });  
+
   container.appendChild(div);
+  currentPassengerCount++;
+}
+
+function renderAllPassengers(data) {
+  container.innerHTML = "";
+  currentPassengerCount = 0;
+  data.forEach((passenger, newIndex) => {
+    createPassengerFields(newIndex, passenger);
+  });
 }
 
 function savePassengers() {
   const passengers = [];
-  for (let i = 0; i < MAX_PASSENGERS; i++) {
-    const name = document.getElementById(`name${i}`).value;
-    const age = document.getElementById(`age${i}`).value;
-    const gender = document.getElementById(`gender${i}`).value;
-    const berth = document.getElementById(`berth${i}`).value;
-    const food = document.getElementById(`food${i}`).value;
+  const blocks = container.querySelectorAll(".passenger-block");
+
+  blocks.forEach((div) => {
+    const index = div.dataset.index;
+    const name = document.getElementById(`name${index}`).value;
+    const age = document.getElementById(`age${index}`).value;
+    const gender = document.getElementById(`gender${index}`).value;
+    const berth = document.getElementById(`berth${index}`).value;
+    const food = document.getElementById(`food${index}`).value;
 
     if (name) {
       passengers.push({ name, age, gender, berth, food });
     }
-  }
+  });
 
   chrome.storage.local.set({ passengers }, () => {
-    alert("Saved successfully!");
+    showNotification("Passenger details saved!");
   });
 }
 
 function loadPassengers() {
   chrome.storage.local.get("passengers", (result) => {
     const data = result.passengers || [];
-    for (let i = 0; i < MAX_PASSENGERS; i++) {
-      createPassengerFields(i, data[i]);
-    }
+    renderAllPassengers(data);
   });
 }
 
+function addPassenger() {
+  if (currentPassengerCount >= MAX_PASSENGERS) {
+    showNotification("Max 6 passengers allowed", "error");
+    return;
+  }
+  createPassengerFields(currentPassengerCount);
+}
+
+function removePassenger(indexToRemove) {
+  const blocks = Array.from(container.querySelectorAll(".passenger-block"));
+  const passengers = [];
+
+  blocks.forEach((div) => {
+    const index = parseInt(div.dataset.index);
+    if (index !== indexToRemove) {
+      const name = document.getElementById(`name${index}`).value;
+      const age = document.getElementById(`age${index}`).value;
+      const gender = document.getElementById(`gender${index}`).value;
+      const berth = document.getElementById(`berth${index}`).value;
+      const food = document.getElementById(`food${index}`).value;
+
+      passengers.push({ name, age, gender, berth, food });
+    }
+  });
+
+  renderAllPassengers(passengers);
+}
+
 function sendFillCommand() {
-  console.log('action_trigger: fill_form')
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const tabId = tabs[0].id;
-    console.log(tabs);
 
     chrome.scripting.executeScript(
-    {
-      target: { tabId },
-      files: ['content.js']
-    },
-    (results) => {
-      if (chrome.runtime.lastError) {
-        console.error("Injection failed:", chrome.runtime.lastError.message);
-      } else {
-        console.log("Injection succeeded:", results);
-
-        // ✅ Send message to the content script inside the web page
-        chrome.tabs.sendMessage(tabId, { action: "fill_form" });
+      {
+        target: { tabId },
+        files: ["content.js"],
+      },
+      (results) => {
+        if (chrome.runtime.lastError) {
+          console.error("Injection failed:", chrome.runtime.lastError.message);
+        } else {
+          chrome.tabs.sendMessage(tabId, { action: "fill_form" });
+        }
       }
-    }
-  )});
+    );
+  });
+}
+
+function showNotification(message, type = "success", timeout = 3) {
+  const notification = document.getElementById("notification");
+  notification.innerText = message;
+  notification.style.backgroundColor =
+    type === "success" ? "#d4edda" : "#f8d7da";
+  notification.style.color = type === "success" ? "#155724" : "#721c24";
+  notification.style.border = `1px solid ${
+    type === "success" ? "#c3e6cb" : "#f5c6cb"
+  }`;
+  notification.style.display = "block";
+  setTimeout(() => {
+    notification.style.display = "none";
+  }, timeout * 1000);
 }
 
 document.getElementById("saveBtn").addEventListener("click", savePassengers);
-document.getElementById("fillBtn").addEventListener("click", sendFillCommand);
+document.getElementById("fillBtn").addEventListener("click", () => {
+  savePassengers();
+  sendFillCommand();
+});
+document.getElementById("addBtn").addEventListener("click", addPassenger);
 
 loadPassengers();
