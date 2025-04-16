@@ -5,16 +5,32 @@ function createPassengerFields(index, data = {}) {
   const div = document.createElement("div");
   div.innerHTML = `
     <strong>Passenger ${index + 1}</strong><br>
-    <input placeholder="Name" id="name${index}" value="${data.name || ""}" />
-    <input placeholder="Age" id="age${index}" value="${data.age || ""}" />
+    <input placeholder="Name*" id="name${index}" value="${data.name || ""}" />
+    <input placeholder="Age*" id="age${index}" value="${data.age || ""}" />
     <select id="gender${index}">
-      <option value="">Gender</option>
+      <option value="">Gender*</option>
       <option value="M" ${data.gender === "M" ? "selected" : ""}>Male</option>
       <option value="F" ${data.gender === "F" ? "selected" : ""}>Female</option>
       <option value="T" ${data.gender === "T" ? "selected" : ""}>Transgender</option>
     </select>
-    <input placeholder="Berth Preference" id="berth${index}" value="${data.berth || ""}" />
-    <input placeholder="Food Preference" id="food${index}" value="${data.food || ""}" />
+    <select id="berth${index}">
+      <option value="">Berth Preference</option>
+      <option value="WS" ${data.berth === "WS" ? "selected" : ""}>Window Side</option>
+      <option value="LB" ${data.berth === "LB" ? "selected" : ""}>Lower</option>
+      <option value="MB" ${data.berth === "MB" ? "selected" : ""}>Middle</option>
+      <option value="UB" ${data.berth === "UB" ? "selected" : ""}>Upper</option>
+      <option value="SL" ${data.berth === "SL" ? "selected" : ""}>Side Lower</option>
+      <option value="SM" ${data.berth === "SM" ? "selected" : ""}>Side Middle</option>
+      <option value="SU" ${data.berth === "SU" ? "selected" : ""}>Side Upper</option>
+      <option value="CB" ${data.berth === "CA" ? "selected" : ""}>Cabin</option>
+      <option value="CP" ${data.berth === "CO" ? "selected" : ""}>Coupe</option>
+    </select>
+    <select id="food${index}">
+      <option value="">Food Preference</option>
+      <option value="D" ${data.food === "D" ? "selected" : ""}>No Food</option>
+      <option value="V" ${data.food === "V" ? "selected" : ""}>Veg</option>
+      <option value="N" ${data.food === "N" ? "selected" : ""}>Non Veg</option>
+    </select>
     <hr>
   `;
   container.appendChild(div);
