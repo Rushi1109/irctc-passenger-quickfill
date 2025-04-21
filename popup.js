@@ -10,22 +10,36 @@ function createPassengerFields(index, data = {}) {
   div.innerHTML = `
     <strong>Passenger ${index + 1}</strong><br>
     <input placeholder="Name*" id="name${index}" value="${data.name || ""}" />
-    <input placeholder="Age*" id="age${index}" value="${data.age || ""}" type="number" />
+    <input placeholder="Age*" id="age${index}" value="${
+    data.age || ""
+  }" type="number" />
     <select id="gender${index}">
       <option value="">Gender*</option>
       <option value="M" ${data.gender === "M" ? "selected" : ""}>Male</option>
       <option value="F" ${data.gender === "F" ? "selected" : ""}>Female</option>
-      <option value="T" ${data.gender === "T" ? "selected" : ""}>Transgender</option>
+      <option value="T" ${
+        data.gender === "T" ? "selected" : ""
+      }>Transgender</option>
     </select>
     <select id="berth${index}">
       <option value="">Berth Preference</option>
-      <option value="WS" ${data.berth === "WS" ? "selected" : ""}>Window Side</option>
+      <option value="WS" ${
+        data.berth === "WS" ? "selected" : ""
+      }>Window Side</option>
       <option value="LB" ${data.berth === "LB" ? "selected" : ""}>Lower</option>
-      <option value="MB" ${data.berth === "MB" ? "selected" : ""}>Middle</option>
+      <option value="MB" ${
+        data.berth === "MB" ? "selected" : ""
+      }>Middle</option>
       <option value="UB" ${data.berth === "UB" ? "selected" : ""}>Upper</option>
-      <option value="SL" ${data.berth === "SL" ? "selected" : ""}>Side Lower</option>
-      <option value="SM" ${data.berth === "SM" ? "selected" : ""}>Side Middle</option>
-      <option value="SU" ${data.berth === "SU" ? "selected" : ""}>Side Upper</option>
+      <option value="SL" ${
+        data.berth === "SL" ? "selected" : ""
+      }>Side Lower</option>
+      <option value="SM" ${
+        data.berth === "SM" ? "selected" : ""
+      }>Side Middle</option>
+      <option value="SU" ${
+        data.berth === "SU" ? "selected" : ""
+      }>Side Upper</option>
       <option value="CB" ${data.berth === "CA" ? "selected" : ""}>Cabin</option>
       <option value="CP" ${data.berth === "CO" ? "selected" : ""}>Coupe</option>
     </select>
@@ -42,7 +56,7 @@ function createPassengerFields(index, data = {}) {
   removeBtn.addEventListener("click", () => {
     removePassenger(index);
     savePassengers();
-  });  
+  });
 
   container.appendChild(div);
   currentPassengerCount++;
@@ -56,7 +70,48 @@ function renderAllPassengers(data) {
   });
 }
 
+function validatePassengerInputs() {
+  let isValid = true;
+  const blocks = container.querySelectorAll(".passenger-block");
+
+  blocks.forEach((div) => {
+    const index = div.dataset.index;
+    const nameInput = document.getElementById(`name${index}`);
+    const ageInput = document.getElementById(`age${index}`);
+    const genderSelect = document.getElementById(`gender${index}`);
+
+    const name = nameInput.value.trim();
+    const age = ageInput.value.trim();
+    const gender = genderSelect.value;
+
+    // Reset styles first
+    [nameInput, ageInput, genderSelect].forEach((el) => {
+      el.classList.remove("invalid");
+    });
+
+    if (!name) {
+      nameInput.classList.add("invalid");
+      isValid = false;
+    }
+    if (!age || isNaN(age) || parseInt(age) <= 0) {
+      ageInput.classList.add("invalid");
+      isValid = false;
+    }
+    if (!gender) {
+      genderSelect.classList.add("invalid");
+      isValid = false;
+    }
+  });
+
+  return isValid;
+}
+
 function savePassengers() {
+  if (!validatePassengerInputs()) {
+    showNotification("Please fill all required fields correctly.", "error");
+    return;
+  }
+
   const passengers = [];
   const blocks = container.querySelectorAll(".passenger-block");
 
@@ -68,9 +123,7 @@ function savePassengers() {
     const berth = document.getElementById(`berth${index}`).value;
     const food = document.getElementById(`food${index}`).value;
 
-    if (name) {
-      passengers.push({ name, age, gender, berth, food });
-    }
+    passengers.push({ name, age, gender, berth, food });
   });
 
   chrome.storage.local.set({ passengers }, () => {

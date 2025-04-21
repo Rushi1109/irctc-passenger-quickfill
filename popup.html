@@ -1,134 +1,147 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>IRCTC Autofill</title>
-  <style>
-    :root {
-      --primary-color: #1976d2;
-      --secondary-color: #eeeeee;
-      --text-color: #333;
-      --success-bg: #d4edda;
-      --error-bg: #f8d7da;
-      --success-text: #155724;
-      --error-text: #721c24;
-    }
+  <head>
+    <title>IRCTC Autofill</title>
+    <style>
+      :root {
+        --primary-color: #1976d2;
+        --secondary-color: #eeeeee;
+        --text-color: #333;
+        --success-bg: #d4edda;
+        --error-bg: #f8d7da;
+        --success-text: #155724;
+        --error-text: #721c24;
+      }
 
-    * {
-      box-sizing: border-box;
-    }
+      * {
+        box-sizing: border-box;
+      }
 
-    body {
-      font-family: "Segoe UI", sans-serif;
-      width: 320px;
-      margin: 0;
-      padding: 15px;
-      background-color: #fafafa;
-      color: var(--text-color);
-    }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        width: 320px;
+        padding: 15px;
+        background-color: #f9fafc;
+        color: var(--text-color);
+      }
 
-    h3 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      color: var(--primary-color);
-      font-size: 18px;
-      text-align: center;
-    }
+      h3 {
+        margin-top: 0;
+        color: var(--primary-color);
+        font-size: 1.2em;
+        text-align: center;
+      }
 
-    #notification {
-      display: none;
-      padding: 10px;
-      margin-bottom: 12px;
-      border-radius: 6px;
-      font-size: 14px;
-    }
+      #notification {
+        display: none;
+        padding: 10px;
+        margin-bottom: 12px;
+        border-radius: 6px;
+        font-size: 14px;
+      }
 
-    .passenger-block {
-      background-color: white;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
+      .passenger-block {
+        background-color: white;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
 
-    .passenger-block strong {
-      display: block;
-      margin-bottom: 8px;
-      color: #444;
-    }
+      .passenger-block strong {
+        display: block;
+        margin-bottom: 8px;
+        color: #444;
+      }
 
-    input, select {
-      width: 100%;
-      margin-bottom: 8px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
-    }
+      input,
+      select {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 6px 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.95em;
+        background-color: #fff;
+        transition: border-color 0.3s, background-color 0.3s;
+      }
 
-    button {
-      width: 100%;
-      padding: 10px;
-      font-size: 14px;
-      margin-top: 8px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
+      input:focus,
+      select:focus {
+        border-color: var(--primary-color);
+        outline: none;
+      }
 
-    #addBtn {
-      background-color: #ffffff;
-      border: 1px dashed var(--primary-color);
-      color: var(--primary-color);
-    }
+      /* ❗ Highlight invalid input */
+      .invalid {
+        border-color: #e74c3c !important;
+        background-color: #fdecea !important;
+      }
 
-    #addBtn:hover {
-      background-color: #f0f8ff;
-    }
+      button {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        margin-top: 8px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
 
-    #saveBtn {
-      background-color: var(--primary-color);
-      color: white;
-    }
+      #addBtn {
+        background-color: #ffffff;
+        border: 1px dashed var(--primary-color);
+        color: var(--primary-color);
+      }
 
-    #saveBtn:hover {
-      background-color: #1258a3;
-    }
+      #addBtn:hover {
+        background-color: #f0f8ff;
+      }
 
-    #fillBtn {
-      background-color: #388e3c;
-      color: white;
-    }
+      #saveBtn {
+        background-color: var(--primary-color);
+        color: white;
+      }
 
-    #fillBtn:hover {
-      background-color: #2e7d32;
-    }
+      #saveBtn:hover {
+        background-color: #1258a3;
+      }
 
-    .remove-btn {
-      background-color: #e53935;
-      color: white;
-      width: 100%;
-      padding: 6px;
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      margin-top: 5px;
-    }
+      #fillBtn {
+        background-color: #388e3c;
+        color: white;
+      }
 
-    .remove-btn:hover {
-      background-color: #c62828;
-    }
-  </style>
-</head>
-<body>
-  <h3>Passenger Details</h3>
-  <div id="notification"></div>
-  <div id="passenger-container"></div>
+      #fillBtn:hover {
+        background-color: #2e7d32;
+      }
 
-  <button id="addBtn">+ Add Passenger</button>
-  <button id="saveBtn"> Save</button>
-  <button id="fillBtn"> Fill Details</button>
+      .remove-btn {
+        background-color: #e53935;
+        color: white;
+        width: 100%;
+        padding: 6px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        margin-top: 5px;
+      }
 
-  <script src="popup.js"></script>
-</body>
+      .remove-btn:hover {
+        background-color: #c62828;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Passenger Details</h3>
+    <div id="notification"></div>
+    <div id="passenger-container"></div>
+
+    <button id="addBtn">+ Add Passenger</button>
+    <button id="saveBtn">Save</button>
+    <button id="fillBtn">Fill Details</button>
+
+    <script src="popup.js"></script>
+  </body>
 </html>
