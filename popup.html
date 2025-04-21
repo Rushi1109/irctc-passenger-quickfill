@@ -3,17 +3,131 @@
 <head>
   <title>IRCTC Autofill</title>
   <style>
-    body { font-family: sans-serif; width: 300px; padding: 10px; }
-    input, select { width: 100%; margin-bottom: 8px; }
+    :root {
+      --primary-color: #1976d2;
+      --secondary-color: #eeeeee;
+      --text-color: #333;
+      --success-bg: #d4edda;
+      --error-bg: #f8d7da;
+      --success-text: #155724;
+      --error-text: #721c24;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", sans-serif;
+      width: 320px;
+      margin: 0;
+      padding: 15px;
+      background-color: #fafafa;
+      color: var(--text-color);
+    }
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+      font-size: 18px;
+      text-align: center;
+    }
+
+    #notification {
+      display: none;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .passenger-block {
+      background-color: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .passenger-block strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #444;
+    }
+
+    input, select {
+      width: 100%;
+      margin-bottom: 8px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    #addBtn {
+      background-color: #ffffff;
+      border: 1px dashed var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    #addBtn:hover {
+      background-color: #f0f8ff;
+    }
+
+    #saveBtn {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    #saveBtn:hover {
+      background-color: #1258a3;
+    }
+
+    #fillBtn {
+      background-color: #388e3c;
+      color: white;
+    }
+
+    #fillBtn:hover {
+      background-color: #2e7d32;
+    }
+
+    .remove-btn {
+      background-color: #e53935;
+      color: white;
+      width: 100%;
+      padding: 6px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .remove-btn:hover {
+      background-color: #c62828;
+    }
   </style>
 </head>
 <body>
   <h3>Passenger Details</h3>
-  <div id="notification" style="display:none; padding: 8px; margin-bottom: 10px; border-radius: 5px;"></div>
+  <div id="notification"></div>
   <div id="passenger-container"></div>
-  <button id="addBtn">Add Passenger</button>
-  <button id="saveBtn">Save</button>
-  <button id="fillBtn">Fill Details</button>
+
+  <button id="addBtn">+ Add Passenger</button>
+  <button id="saveBtn"> Save</button>
+  <button id="fillBtn"> Fill Details</button>
 
   <script src="popup.js"></script>
 </body>
