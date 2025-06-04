@@ -9,8 +9,8 @@ function createPassengerFields(index, data = {}) {
 
   div.innerHTML = `
     <strong>Passenger ${index + 1}</strong><br>
-    <input placeholder="Name*" id="name${index}" value="${data.name || ""}" />
-    <input placeholder="Age*" id="age${index}" value="${data.age || ""}" type="number" />
+    <input placeholder="Name*" id="name${index}" value="${data.name || ""}" maxlength="16" />
+    <input placeholder="Age*" id="age${index}" value="${data.age || ""}" type="number" min="1" max="125" />
     <select id="gender${index}">
       <option value="">Gender*</option>
       <option value="M" ${data.gender === "M" ? "selected" : ""}>Male</option>
@@ -75,11 +75,13 @@ function validatePassengerInputs() {
       el.classList.remove("invalid");
     });
 
-    if (!name) {
+    if (!name || name.length > 16) {
       nameInput.classList.add("invalid");
       isValid = false;
     }
-    if (!age || isNaN(age) || parseInt(age) <= 0) {
+
+    const ageNumber = parseInt(age);
+    if (!age || isNaN(ageNumber) || ageNumber < 1 || ageNumber > 125) {
       ageInput.classList.add("invalid");
       isValid = false;
     }
