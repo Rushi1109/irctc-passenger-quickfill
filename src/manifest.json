@@ -3,6 +3,11 @@
   "name": "IRCTC Passenger AutoFill",
   "version": "1.0.0",
   "description": "Auto-fills passenger details on IRCTC with one click.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "irctc-passenger-autofill@example.org"
+    }
+  },
   "permissions": [
     "storage", 
     "scripting", 
